@@ -1,0 +1,60 @@
+Using Scala version 2.11.8 (Java HotSpot(TM) 64-Bit Server VM, Java 1.8.0_221)
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala> val lines = sc.textFile("hdfs://localhost:9000/usr/hadoop/mani/scala/input/input.txt")
+lines: org.apache.spark.rdd.RDD[String] = hdfs://localhost:9000/usr/hadoop/mani/scala/input/input.txt MapPartitionsRDD[1] at textFile at <console>:24
+
+scala> val words = lines.flatMap(_.split("\\s+"))
+words: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[2] at flatMap at <console>:26
+
+scala> val wc = words.map(w => (w, 1)).reduceByKey(_ + _)
+wc: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[4] at reduceByKey at <console>:28
+
+scala> wc.saveAsTextFile("README.count")
+org.apache.hadoop.mapred.FileAlreadyExistsException: Output directory file:/Users/mani/hadoop/spark-2.2.0-bin-hadoop2.7/bin/README.count already exists
+  at org.apache.hadoop.mapred.FileOutputFormat.checkOutputSpecs(FileOutputFormat.java:131)
+  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopDataset$1.apply$mcV$sp(PairRDDFunctions.scala:1119)
+  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopDataset$1.apply(PairRDDFunctions.scala:1096)
+  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopDataset$1.apply(PairRDDFunctions.scala:1096)
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
+  at org.apache.spark.rdd.RDD.withScope(RDD.scala:362)
+  at org.apache.spark.rdd.PairRDDFunctions.saveAsHadoopDataset(PairRDDFunctions.scala:1096)
+  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$4.apply$mcV$sp(PairRDDFunctions.scala:1070)
+  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$4.apply(PairRDDFunctions.scala:1035)
+  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$4.apply(PairRDDFunctions.scala:1035)
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
+  at org.apache.spark.rdd.RDD.withScope(RDD.scala:362)
+  at org.apache.spark.rdd.PairRDDFunctions.saveAsHadoopFile(PairRDDFunctions.scala:1035)
+  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$1.apply$mcV$sp(PairRDDFunctions.scala:961)
+  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$1.apply(PairRDDFunctions.scala:961)
+  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$1.apply(PairRDDFunctions.scala:961)
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
+  at org.apache.spark.rdd.RDD.withScope(RDD.scala:362)
+  at org.apache.spark.rdd.PairRDDFunctions.saveAsHadoopFile(PairRDDFunctions.scala:960)
+  at org.apache.spark.rdd.RDD$$anonfun$saveAsTextFile$1.apply$mcV$sp(RDD.scala:1489)
+  at org.apache.spark.rdd.RDD$$anonfun$saveAsTextFile$1.apply(RDD.scala:1468)
+  at org.apache.spark.rdd.RDD$$anonfun$saveAsTextFile$1.apply(RDD.scala:1468)
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
+  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
+  at org.apache.spark.rdd.RDD.withScope(RDD.scala:362)
+  at org.apache.spark.rdd.RDD.saveAsTextFile(RDD.scala:1468)
+  ... 48 elided
+
+scala> wc.saveAsTextFile("README_mani.count")
+
+scala> :quit
+sais-air:bin mani$ ls
+README.count		derby.log		metastore_db		run-example		spark-class2.cmd	spark-sql		sparkR
+README_mani.count	find-spark-home		pyspark			run-example.cmd		spark-shell		spark-submit		sparkR.cmd
+beeline			load-spark-env.cmd	pyspark.cmd		spark-class		spark-shell.cmd		spark-submit.cmd	sparkR2.cmd
+beeline.cmd		load-spark-env.sh	pyspark2.cmd		spark-class.cmd		spark-shell2.cmd	spark-submit2.cmd
+sais-air:bin mani$ cd README_mani.count
+sais-air:README_mani.count mani$ ls
+_SUCCESS	part-00000	part-00001
+sais-air:README_mani.count mani$ open .
+sais-air:README_mani.count mani$ ls
+_SUCCESS	part-00000	part-00001
