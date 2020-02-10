@@ -1,0 +1,19 @@
+user
+
+screen_name
+
+friends_count":
+
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+
+val textFile = sqlContext.read.json("Tweet.txt");
+
+textFile.printSchema()
+
+textFile.createOrReplaceTempView("demo");
+
+tr.coalesce(1).write.json("fansCount");
+
+val tr = sqlContext.sql("select user.friends_count from demo where user.screen_name is WheroAndIti");
+
+val e = s.withColumn("words", explode(split($"text", " "))).filter($"words".like("#%"));
